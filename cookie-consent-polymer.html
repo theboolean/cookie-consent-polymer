@@ -131,6 +131,10 @@ Example:
         type: Boolean,
         value: false
       },
+      showOutsideEu: {
+        type: Boolean,
+        value: false
+      },
       scrollConsent: {
         type: Boolean,
         value: false
@@ -226,7 +230,11 @@ Example:
 
     attached: function() {
       if (!this._cookieExists()) {
-        this.$.check_country.generateRequest();
+        if (!this.showOutsideEu) {
+          this.$.check_country.generateRequest();
+        } else {
+          this._setup();
+        }
       }
     }
 
