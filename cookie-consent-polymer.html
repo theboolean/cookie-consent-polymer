@@ -4,6 +4,8 @@
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../neon-animation/animations/scale-up-animation.html">
 <link rel="import" href="../neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
 <!--
 The cookie-consent-polymer element provides a dialog with the option to accept website cookies according
 to the EU law.
@@ -29,59 +31,85 @@ Example:
       :host {
         @apply(--cookie-consent-theme);
       }
+
+      #layout {
+
+        @apply(--layout-vertical);
+        margin: 0 !important;
+      }
+
+      #button paper-button {
+        margin: 0;
+      }
+
+      @media screen and (min-width: 680px) {
+        #layout {
+          @apply(--layout-horizontal);
+        }
+      }
+
+      #data {
+        @apply(--layout-flex);
+      }
+
+      #button {
+        text-align: right;
+      }
+
       #consent_dialog {
         width: 100%;
         height: auto;
         position: absolute;
         bottom: 0;
-        display: table;
         @apply(--dialog-theme);
       }
       #dialog_body, #policy_link, #accept_button, #decline_button {
-        display: table-cell;
-        vertical-align: middle;
         @apply(--dialog-items-theme);
       }
       #dialog_body {
-        padding-bottom: 24px;
+        width: auto;
         @apply(--dialog-body-theme);
       }
       #accept_button {
-        width: 10%;
+
         @apply(--accept-button-theme);
       }
       #decline_button{
-        width: 10%;
         @apply(--decline-button-theme);
       }
       #policy_link{
-        padding-left: 5px;
-        padding-bottom: 24px;
+
         @apply(--policy-link-theme);
       }
       .dialog_item {
         @apply(--dialog-items-theme);
+        width: auto;
       }
+
+
     </style>
     <byutv-jsonp id="check_country"
-      url="https://freegeoip.net/json/"
-      on-response="_checkCountryCode"></byutv-jsonp>
+                 url="https://freegeoip.net/json/"
+                 on-response="_checkCountryCode"></byutv-jsonp>
 
     <paper-dialog id="consent_dialog"
-      no-cancel-on-esc-key="true"
-      no-cancel-on-outside-click="true"
-      entry-animation="scale-up-animation"
-      exit-animation="fade-out-animation">
-      <div>
-        <p id="dialog_body" class="dialog_item">{{dialogText}}</p>
-        <template is="dom-if" if='{{moreInfoText}}'>
-          <a id="policy_link" class="dialog_item" href="{{moreInfoLink}}">{{moreInfoText}}</a>
-        </template>
+                  no-cancel-on-esc-key="true"
+                  no-cancel-on-outside-click="true"
+                  entry-animation="scale-up-animation"
+                  exit-animation="fade-out-animation">
+      <div id="layout">
+        <div id="data">
+          <p id="dialog_body" class="dialog_item">{{dialogText}}  <template is="dom-if" if='{{moreInfoText}}'>
+            <a id="policy_link" class="dialog_item" href="{{moreInfoLink}}">{{moreInfoText}}</a>
+          </template></p>
+        </div>
+        <div id="button">
+          <paper-button id="accept_button" class="dialog_item" on-click="_setCookie" data-choice="true" dialog-confirm>{{buttonText}}</paper-button>
+          <template is="dom-if" if='{{canDecline}}'>
+            <paper-button id="decline_button" class="dialog_item" on-click="_setCookie" data-choice="false" dialog-dismiss>{{declineButtonText}}</paper-button>
+          </template>
+        </div>
       </div>
-      <paper-button id="accept_button" class="dialog_item" on-click="_setCookie" data-choice="true" dialog-confirm>{{buttonText}}</paper-button>
-      <template is="dom-if" if='{{canDecline}}'>
-        <paper-button id="decline_button" class="dialog_item" on-click="_setCookie" data-choice="false" dialog-dismiss>{{declineButtonText}}</paper-button>
-      </template>
     </paper-dialog>
   </template>
 
@@ -150,35 +178,35 @@ Example:
     },
 
     _countryCodes: function() {
-        return [
-          'BE',
-          'BG',
-          'CZ',
-          'DK',
-          'DE',
-          'EE',
-          'IE',
-          'GR',
-          'ES',
-          'FR',
-          'IT',
-          'CY',
-          'LV',
-          'LT',
-          'LU',
-          'HU',
-          'MT',
-          'NL',
-          'AT',
-          'PL',
-          'PT',
-          'RO',
-          'SI',
-          'SK',
-          'FI',
-          'SE',
-          'GB'
-        ];
+      return [
+        'BE',
+        'BG',
+        'CZ',
+        'DK',
+        'DE',
+        'EE',
+        'IE',
+        'GR',
+        'ES',
+        'FR',
+        'IT',
+        'CY',
+        'LV',
+        'LT',
+        'LU',
+        'HU',
+        'MT',
+        'NL',
+        'AT',
+        'PL',
+        'PT',
+        'RO',
+        'SI',
+        'SK',
+        'FI',
+        'SE',
+        'GB'
+      ];
     },
 
     _setCookie: function(e) {
@@ -190,7 +218,7 @@ Example:
       var date = new Date();
       date.setTime(+ date + (this.expiresInDays * 86400000));
       document.cookie = "acceptCookies=" + choice + "; expires=" +
-      date.toGMTString() + "; path=" + this.cookiePath;
+              date.toGMTString() + "; path=" + this.cookiePath;
       if (this.canDecline && this.fallbackUrl !== "") {
         window.location.href = this.fallbackUrl;
       }
@@ -231,9 +259,9 @@ Example:
     attached: function() {
       if (!this._cookieExists()) {
         if (this.skipLocationCheck) {
-          this._setup();
-        } else {
           this.$.check_country.generateRequest();
+        } else {
+          this._setup();
         }
       }
     }
