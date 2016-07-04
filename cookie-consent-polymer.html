@@ -257,9 +257,9 @@ Example:
     attached: function() {
       if (!this._cookieExists()) {
         if (this.skipLocationCheck) {
-          this.$.check_country.generateRequest();
-        } else {
           this._setup();
+        } else {
+          this.$.check_country.generateRequest();
         }
       }
     }
